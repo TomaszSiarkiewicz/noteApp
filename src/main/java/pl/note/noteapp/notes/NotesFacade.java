@@ -3,10 +3,7 @@ package pl.note.noteapp.notes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
-import pl.note.noteapp.dtos.FindAllDto;
-import pl.note.noteapp.dtos.NewNoteDto;
-import pl.note.noteapp.dtos.NoteDto;
-import pl.note.noteapp.dtos.UpdateNoteDto;
+import pl.note.noteapp.dtos.*;
 import pl.note.noteapp.repository.NoteRepository;
 
 import java.util.Optional;
@@ -17,14 +14,23 @@ import static pl.note.noteapp.notes.NoteMapper.*;
 @Component
 public class NotesFacade {
     private final NoteRepository noteRepository;
+    private final NewNoteValidator validator;
 
-    public NotesFacade(NoteRepository noteRepository) {
+    public NotesFacade(NoteRepository noteRepository, NewNoteValidator validator) {
         this.noteRepository = noteRepository;
+        this.validator = validator;
     }
 
-    public NoteDto saveNote(NewNoteDto noteDto) {
-        Note saved = noteRepository.save(dtoToNote(noteDto));
-        return noteToDto(saved);
+    public NewNoteResponseDto saveNote(NewNoteDto newNoteDto) {
+        ValidationResult validated = validator.validate(newNoteDto);
+
+        if (validated.isValid()) {
+            Note saved = noteRepository.save(dtoToNote(newNoteDto));
+            NoteDto noteDto = noteToDto(saved);
+            return new NewNoteResponseDto(noteDto, validated.isValid(), validated.getMessage());
+        } else {
+            return new NewNoteResponseDto(null, validated.isValid(), validated.getMessage());
+        }
     }
 
     public FindAllDto findAllNotes() {

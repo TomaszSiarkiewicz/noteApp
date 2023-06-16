@@ -6,10 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.note.noteapp.dtos.FindAllDto;
-import pl.note.noteapp.dtos.NewNoteDto;
-import pl.note.noteapp.dtos.NoteDto;
-import pl.note.noteapp.dtos.UpdateNoteDto;
+import pl.note.noteapp.dtos.*;
 import pl.note.noteapp.notes.NotesFacade;
 
 import java.util.Optional;
@@ -23,10 +20,15 @@ public class NotesController {
     }
 
     @PostMapping("/note")
-    ResponseEntity<NoteDto> result(@RequestBody NewNoteDto note) {
-        NoteDto response = notesFacade.saveNote(note);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(response);
+    ResponseEntity<NewNoteResponseDto> result(@RequestBody NewNoteDto note) {
+        NewNoteResponseDto response = notesFacade.saveNote(note);
+        if (response.isValid()) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(response);
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(response);
+        }
     }
 
     @PutMapping("/note")
@@ -48,7 +50,6 @@ public class NotesController {
     @GetMapping("/notes/paged")
     Page<NoteDto> findAll(@RequestParam int page){
         PageRequest pageRequest = PageRequest.of(page, 4, Sort.by("lastEditDate"));
-        //todo
         return notesFacade.findAllNotesPaged(pageRequest);
     }
 

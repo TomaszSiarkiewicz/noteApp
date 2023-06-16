@@ -2,18 +2,16 @@ package pl.note.noteapp.notes;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import pl.note.noteapp.dtos.FindAllDto;
-import pl.note.noteapp.dtos.NewNoteDto;
-import pl.note.noteapp.dtos.NoteDto;
-import pl.note.noteapp.dtos.UpdateNoteDto;
+import pl.note.noteapp.dtos.*;
 import pl.note.noteapp.repository.NoteRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class NotesFacadeTest {
     NoteRepository noteRepository = new InMemoryNotesDatabaseImplementation();
+    NewNoteValidator validator = new NewNoteValidator();
 
-    NotesFacade notesFacade = new NotesFacade(noteRepository);
+    NotesFacade notesFacade = new NotesFacade(noteRepository, validator);
 
     @AfterEach
     public void cleanUp(){
@@ -24,21 +22,21 @@ public class NotesFacadeTest {
         //given
         NewNoteDto newNote = new NewNoteDto("title", "content");
         //when
-        NoteDto noteDTO = notesFacade.saveNote(newNote);
+        NewNoteResponseDto newNoteResponseDto = notesFacade.saveNote(newNote);
         //then
-        assertThat(noteDTO).isNotNull();
-        assertThat(noteDTO.title()).isEqualTo(newNote.title());
+        assertThat(newNoteResponseDto).isNotNull();
+        assertThat(newNoteResponseDto.noteDto().title()).isEqualTo(newNote.title());
     }
     @Test
     public void should_update_note(){
         //given
         NewNoteDto newNote = new NewNoteDto("title", "content");
-        NoteDto noteDtoToBeUpdated = notesFacade.saveNote(newNote);
-        UpdateNoteDto updateDto = new UpdateNoteDto(noteDtoToBeUpdated.noteId(),"new title", "new content");
+        NewNoteResponseDto noteDtoToBeUpdated = notesFacade.saveNote(newNote);
+        UpdateNoteDto updateDto = new UpdateNoteDto(noteDtoToBeUpdated.noteDto().noteId(),"new title", "new content");
         //when
         NoteDto result = notesFacade.updateNote(updateDto).get();
         //then
-        assertThat(result.noteId()).isEqualTo(noteDtoToBeUpdated.noteId());
+        assertThat(result.noteId()).isEqualTo(noteDtoToBeUpdated.noteDto().noteId());
     }
     @Test
     public void should_find_all_saved_notes(){
