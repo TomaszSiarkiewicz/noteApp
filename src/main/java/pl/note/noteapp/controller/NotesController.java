@@ -1,5 +1,8 @@
 package pl.note.noteapp.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +43,13 @@ public class NotesController {
         FindAllDto response = notesFacade.findAllNotes();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @GetMapping("/notes/paged")
+    Page<NoteDto> findAll(@RequestParam int page){
+        PageRequest pageRequest = PageRequest.of(page, 4, Sort.by("lastEditDate"));
+        //todo
+        return notesFacade.findAllNotesPaged(pageRequest);
     }
 
     @GetMapping("/note/{noteId}")
