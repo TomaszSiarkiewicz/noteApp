@@ -23,14 +23,36 @@ public class NotesFacade {
 
     public NewNoteResponseDto saveNote(NewNoteDto newNoteDto) {
         ValidationResult validated = validator.validate(newNoteDto);
+        return processSave(validated, newNoteDto);
+    }
 
+    public NewNoteResponseDto updateNote(UpdateNoteDto noteDTO) {
+        ValidationResult validationResult = validator.validate(noteDTO);
+        return processUpdate(validationResult, noteDTO);
+
+    }
+
+    private NewNoteResponseDto processSave(ValidationResult validated, NewNoteDto newNoteDto) {
         if (validated.isValid()) {
             Note saved = noteRepository.save(dtoToNote(newNoteDto));
             NoteDto noteDto = noteToDto(saved);
-            return new NewNoteResponseDto(noteDto, validated.isValid(), validated.getMessage());
+            return new NewNoteResponseDto(noteDto, true, validated.message());
         } else {
-            return new NewNoteResponseDto(null, validated.isValid(), validated.getMessage());
+            return new NewNoteResponseDto(null, false, validated.message());
         }
+    }
+
+    private NewNoteResponseDto processUpdate(ValidationResult validationResult, UpdateNoteDto noteDTO) {
+        if (validationResult.isValid()){
+            Optional<Note> note = findById(noteDTO.noteId());
+            if (note.isEmpty()) {
+                return new NewNoteResponseDto(null, false, "Incorrect note ID");
+            } else {
+                Note saved = noteRepository.save(updateDtoToNote(noteDTO, note.get()));
+                return new NewNoteResponseDto(noteToDto(saved), true, "Success!");
+            }
+        }
+        return new NewNoteResponseDto(null, false, validationResult.message());
     }
 
     public FindAllDto findAllNotes() {
@@ -41,16 +63,6 @@ public class NotesFacade {
 
     private Optional<Note> findById(String noteId) {
         return noteRepository.findById(noteId);
-    }
-
-    public Optional<NoteDto> updateNote(UpdateNoteDto noteDTO) {
-        Optional<Note> note = findById(noteDTO.noteId());
-        if (note.isEmpty()) {
-            return Optional.empty();
-        } else {
-            Note saved = noteRepository.save(updateDtoToNote(noteDTO, note.get()));
-            return Optional.of(noteToDto(saved));
-        }
     }
 
     public Optional<NoteDto> getNoteById(String id) {

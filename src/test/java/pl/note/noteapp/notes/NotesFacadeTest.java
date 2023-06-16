@@ -34,7 +34,7 @@ public class NotesFacadeTest {
         NewNoteResponseDto noteDtoToBeUpdated = notesFacade.saveNote(newNote);
         UpdateNoteDto updateDto = new UpdateNoteDto(noteDtoToBeUpdated.noteDto().noteId(),"new title", "new content");
         //when
-        NoteDto result = notesFacade.updateNote(updateDto).get();
+        NoteDto result = notesFacade.updateNote(updateDto).noteDto();
         //then
         assertThat(result.noteId()).isEqualTo(noteDtoToBeUpdated.noteDto().noteId());
     }

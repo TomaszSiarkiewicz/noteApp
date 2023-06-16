@@ -1,19 +1,4 @@
 package pl.note.noteapp.notes;
 
- class ValidationResult {
-    private final boolean isValid;
-    private String message;
-
-     public ValidationResult(boolean isValid, String message) {
-         this.isValid = isValid;
-         this.message = message;
-     }
-
-     public boolean isValid() {
-         return isValid;
-     }
-
-     public String getMessage() {
-         return message;
-     }
- }
+record ValidationResult(boolean isValid, String message) {
+}

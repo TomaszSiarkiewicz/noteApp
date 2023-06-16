@@ -2,6 +2,7 @@ package pl.note.noteapp.notes;
 
 import org.springframework.stereotype.Component;
 import pl.note.noteapp.dtos.NewNoteDto;
+import pl.note.noteapp.dtos.UpdateNoteDto;
 
 @Component
 public class NewNoteValidator {
@@ -14,5 +15,8 @@ public class NewNoteValidator {
         } else {
             return new ValidationResult(false, BLANK_MESSAGE);
         }
+    }
+    public ValidationResult validate(UpdateNoteDto noteDto){
+        return validate(new NewNoteDto(noteDto.title(), noteDto.content()));
     }
 }

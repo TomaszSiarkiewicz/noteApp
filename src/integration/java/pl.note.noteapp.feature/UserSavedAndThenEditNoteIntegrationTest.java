@@ -21,6 +21,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import pl.note.noteapp.NoteAppApplication;
 import pl.note.noteapp.dtos.FindAllDto;
+import pl.note.noteapp.dtos.NewNoteResponseDto;
 import pl.note.noteapp.dtos.NoteDto;
 import pl.note.noteapp.dtos.NoteFindAllDto;
 import pl.note.noteapp.notes.NotesFacade;
@@ -76,7 +77,13 @@ public class UserSavedAndThenEditNoteIntegrationTest {
                 "content": "content"
                 }
                 """));
-        ResultActions newNoteResponse2 = mockMvc.perform(MockMvcRequestBuilders.post("/note").contentType(MediaType.APPLICATION_JSON).content("""
+        ResultActions newNoteResponseInvalid = mockMvc.perform(MockMvcRequestBuilders.post("/note").contentType(MediaType.APPLICATION_JSON).content("""
+                {
+                "title": "",
+                "content": "content"
+                }
+                """));
+        ResultActions newNoteResponse3 = mockMvc.perform(MockMvcRequestBuilders.post("/note").contentType(MediaType.APPLICATION_JSON).content("""
                 {
                 "title": "title",
                 "content": "content"
@@ -84,13 +91,18 @@ public class UserSavedAndThenEditNoteIntegrationTest {
                 """));
         //then
         newNoteResponse1.andExpect(status().isCreated());
+        newNoteResponse3.andExpect(status().isCreated());
+        newNoteResponseInvalid.andExpect(status().isNotAcceptable());
         String json = newNoteResponse1.andReturn().getResponse().getContentAsString();
-        NoteDto createdNoteDto = objectMapper.readValue(json, NoteDto.class);
+        NewNoteResponseDto createdNoteDto = objectMapper.readValue(json, NewNoteResponseDto.class);
+        json = newNoteResponseInvalid.andReturn().getResponse().getContentAsString();
+        NewNoteResponseDto invalidNoteDto = objectMapper.readValue(json, NewNoteResponseDto.class);
 
         assertAll(
-                () -> assertThat(createdNoteDto.noteId()).isNotNull(),
-                () -> assertThat(createdNoteDto.lastEditDate()).isNotNull(),
-                () -> assertThat(createdNoteDto.title()).isEqualTo("title"));
+                () -> assertThat(createdNoteDto.noteDto().noteId()).isNotNull(),
+                () -> assertThat(createdNoteDto.noteDto().lastEditDate()).isNotNull(),
+                () -> assertThat(createdNoteDto.noteDto().title()).isEqualTo("title"),
+                () -> assertThat(invalidNoteDto.message().equals("Title can not be blank!")));
 
 
         // Step 2: user made GET request to /notes - system returned 200 OK
@@ -107,7 +119,7 @@ public class UserSavedAndThenEditNoteIntegrationTest {
 
         assertAll(
                 () -> assertThat(notes.size()).isEqualTo(2),
-                () -> assertThat(notes.get(0).id()).isEqualTo(createdNoteDto.noteId()));
+                () -> assertThat(notes.get(0).id()).isEqualTo(createdNoteDto.noteDto().noteId()));
 
         // Step 3: user made GET request to /notes - system returned 200 OK
 
@@ -137,9 +149,9 @@ public class UserSavedAndThenEditNoteIntegrationTest {
         //then
         updateNote.andExpect(status().isOk());
         json = updateNote.andReturn().getResponse().getContentAsString();
-        NoteDto updated = objectMapper.readValue(json, NoteDto.class);
+        NewNoteResponseDto updated = objectMapper.readValue(json, NewNoteResponseDto.class);
 
-        assertThat(updated.title()).isEqualTo("new title");
+        assertThat(updated.noteDto().title()).isEqualTo("new title");
     }
 
 }

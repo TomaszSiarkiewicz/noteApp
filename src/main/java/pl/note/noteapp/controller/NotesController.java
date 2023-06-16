@@ -25,19 +25,20 @@ public class NotesController {
         if (response.isValid()) {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(response);
-        }else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
                     .body(response);
         }
     }
 
     @PutMapping("/note")
-    ResponseEntity<NoteDto> updateResult(@RequestBody UpdateNoteDto noteDTO) {
-        Optional<NoteDto> result = notesFacade.updateNote(noteDTO);
-        return result.map(value -> ResponseEntity.status(HttpStatus.OK)
-                        .body(value))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(null));
+    ResponseEntity<NewNoteResponseDto> updateResult(@RequestBody UpdateNoteDto noteDTO) {
+        NewNoteResponseDto result = notesFacade.updateNote(noteDTO);
+        if (result.isValid()) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        }
     }
 
     @GetMapping("/notes")
@@ -48,7 +49,7 @@ public class NotesController {
     }
 
     @GetMapping("/notes/paged")
-    Page<NoteDto> findAll(@RequestParam int page){
+    Page<NoteDto> findAll(@RequestParam int page) {
         PageRequest pageRequest = PageRequest.of(page, 4, Sort.by("lastEditDate"));
         return notesFacade.findAllNotesPaged(pageRequest);
     }
