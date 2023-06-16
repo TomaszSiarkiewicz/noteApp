@@ -148,6 +148,25 @@ public class UserSavedAndThenEditNoteIntegrationTest {
         NewNoteResponseDto updated = objectMapper.readValue(json, NewNoteResponseDto.class);
 
         assertThat(updated.noteDto().title()).isEqualTo("new title");
+
+        //Step 5: user made DELETE request to /note{noteId} - system returned 200 OK
+
+        //given
+        //when
+        getAllResponse = mockMvc.perform(MockMvcRequestBuilders.get("/notes"));
+        json = getAllResponse.andReturn().getResponse().getContentAsString();
+        FindAllDto findAllNotesDto = objectMapper.readValue(json, FindAllDto.class);
+        List<NoteFindAllDto> allNotes = findAllDto.notes();
+        ResultActions delete = mockMvc.perform(MockMvcRequestBuilders.delete("/note/" + allNotes.get(0).id()));
+        getAllResponse = mockMvc.perform(MockMvcRequestBuilders.get("/notes"));
+        getById.andExpect(status().isOk());
+        json = getAllResponse.andReturn().getResponse().getContentAsString();
+        findAllDto = objectMapper.readValue(json, FindAllDto.class);
+        allNotes = findAllDto.notes();
+
+        //then
+
+        assertThat(allNotes.size()).isEqualTo(1);
     }
 
 }

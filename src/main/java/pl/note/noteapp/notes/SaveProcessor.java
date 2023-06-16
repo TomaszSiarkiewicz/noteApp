@@ -2,10 +2,7 @@ package pl.note.noteapp.notes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.note.noteapp.dtos.NewNoteDto;
-import pl.note.noteapp.dtos.NewNoteResponseDto;
-import pl.note.noteapp.dtos.NoteDto;
-import pl.note.noteapp.dtos.UpdateNoteDto;
+import pl.note.noteapp.dtos.*;
 import pl.note.noteapp.repository.NoteRepository;
 
 import java.util.Optional;
@@ -44,5 +41,15 @@ class SaveProcessor {
             }
         }
         return new NewNoteResponseDto(null, false, validationResult.message());
+    }
+
+    public DeleteResponseDto delete(String noteId) {
+        Optional<Note> note = noteRepository.findById(noteId);
+
+        if (note.isPresent()){
+            noteRepository.deleteById(noteId);
+            return new DeleteResponseDto(note.get().title(), true, "Success!");
+        }
+        return new DeleteResponseDto("", false, "Wrong Id");
     }
 }

@@ -38,10 +38,6 @@ public class NotesFacade {
                 .collect(Collectors.toList()));
     }
 
-    private Optional<Note> findById(String noteId) {
-        return noteRepository.findById(noteId);
-    }
-
     public Optional<NoteDto> getNoteById(String id) {
         Optional<Note> note = noteRepository.findById(id);
         return note.map(NoteMapper::noteToDto);
@@ -52,5 +48,9 @@ public class NotesFacade {
         return notePage.map(
                 NoteMapper::noteToDto
         );
+    }
+
+    public DeleteResponseDto delete(String noteId) {
+        return saveProcessor.delete(noteId);
     }
 }

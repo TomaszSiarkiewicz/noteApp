@@ -51,4 +51,15 @@ public class NotesFacadeTest {
         //then
         assertThat(allNotes.notes().size()).isEqualTo(5);
     }
+    @Test
+    public void should_delete_note(){
+        //given
+        NewNoteDto newNote = new NewNoteDto("title", "content");
+        //when
+        NewNoteResponseDto newNoteResponseDto = notesFacade.saveNote(newNote);
+        String noteId = newNoteResponseDto.noteDto().noteId();
+        notesFacade.delete(noteId);
+        //then
+        assertThat(notesFacade.getNoteById(noteId)).isEmpty();
+    }
 }

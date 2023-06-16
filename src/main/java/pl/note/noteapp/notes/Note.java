@@ -14,4 +14,5 @@ public record Note(
         String title,
         String content
 ) {
+
 }

@@ -29,7 +29,11 @@ public class InMemoryNotesDatabaseImplementation implements NoteRepository {
 
     @Override
     public Optional<Note> findById(String s) {
-        return Optional.of(notesDatabase.get(s));
+        try {
+           return Optional.of(notesDatabase.get(s));
+        } catch (NullPointerException e){
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -105,12 +109,13 @@ public class InMemoryNotesDatabaseImplementation implements NoteRepository {
 
     @Override
     public void deleteById(String s) {
+        notesDatabase.remove(s);
 
     }
 
     @Override
     public void delete(Note entity) {
-
+        notesDatabase.remove(entity);
     }
 
     @Override

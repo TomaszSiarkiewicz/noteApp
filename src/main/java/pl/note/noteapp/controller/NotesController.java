@@ -62,4 +62,16 @@ public class NotesController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(null));
     }
+
+    @DeleteMapping("/note/{noteId}")
+    ResponseEntity delete(@PathVariable String noteId) {
+        DeleteResponseDto response = notesFacade.delete(noteId);
+        if (response.isDeleted()) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(response);
+        }
+    }
 }
