@@ -1,6 +1,5 @@
 package pl.note.noteapp.notes;
 
-import com.fasterxml.jackson.databind.util.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,6 @@ import pl.note.noteapp.dtos.UpdateNoteDto;
 import pl.note.noteapp.repository.NoteRepository;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static pl.note.noteapp.notes.NoteMapper.*;
@@ -57,12 +55,7 @@ public class NotesFacade {
     public Page<NoteDto> findAllNotesPaged(PageRequest pageRequest) {
         Page<Note> notePage = noteRepository.findAll(pageRequest);
         return notePage.map(
-                new Function<Note, NoteDto>() {
-                    @Override
-                    public NoteDto apply(Note note) {
-                        return noteToDto(note);
-                    }
-                }
+                NoteMapper::noteToDto
         );
     }
 }
