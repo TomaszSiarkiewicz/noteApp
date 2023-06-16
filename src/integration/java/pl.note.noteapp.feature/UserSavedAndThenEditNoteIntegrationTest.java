@@ -1,13 +1,12 @@
 package pl.note.noteapp.feature;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -25,14 +24,11 @@ import pl.note.noteapp.dtos.NewNoteResponseDto;
 import pl.note.noteapp.dtos.NoteDto;
 import pl.note.noteapp.dtos.NoteFindAllDto;
 import pl.note.noteapp.notes.NotesFacade;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

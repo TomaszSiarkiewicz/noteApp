@@ -10,8 +10,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class NotesFacadeTest {
     NoteRepository noteRepository = new InMemoryNotesDatabaseImplementation();
     NewNoteValidator validator = new NewNoteValidator();
+    SaveProcessor saveProcessor = new SaveProcessor(noteRepository);
 
-    NotesFacade notesFacade = new NotesFacade(noteRepository, validator);
+    NotesFacade notesFacade = new NotesFacade(noteRepository, validator, saveProcessor);
 
     @AfterEach
     public void cleanUp(){

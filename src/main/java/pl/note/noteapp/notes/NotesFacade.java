@@ -9,50 +9,27 @@ import pl.note.noteapp.repository.NoteRepository;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static pl.note.noteapp.notes.NoteMapper.*;
-
 @Component
 public class NotesFacade {
     private final NoteRepository noteRepository;
     private final NewNoteValidator validator;
+    private final SaveProcessor saveProcessor;
 
-    public NotesFacade(NoteRepository noteRepository, NewNoteValidator validator) {
+    public NotesFacade(NoteRepository noteRepository, NewNoteValidator validator, SaveProcessor saveProcessor) {
         this.noteRepository = noteRepository;
         this.validator = validator;
+        this.saveProcessor = saveProcessor;
     }
 
     public NewNoteResponseDto saveNote(NewNoteDto newNoteDto) {
         ValidationResult validated = validator.validate(newNoteDto);
-        return processSave(validated, newNoteDto);
+        return saveProcessor.processSave(validated, newNoteDto);
     }
 
     public NewNoteResponseDto updateNote(UpdateNoteDto noteDTO) {
         ValidationResult validationResult = validator.validate(noteDTO);
-        return processUpdate(validationResult, noteDTO);
+        return saveProcessor.processUpdate(validationResult, noteDTO);
 
-    }
-
-    private NewNoteResponseDto processSave(ValidationResult validated, NewNoteDto newNoteDto) {
-        if (validated.isValid()) {
-            Note saved = noteRepository.save(dtoToNote(newNoteDto));
-            NoteDto noteDto = noteToDto(saved);
-            return new NewNoteResponseDto(noteDto, true, validated.message());
-        } else {
-            return new NewNoteResponseDto(null, false, validated.message());
-        }
-    }
-
-    private NewNoteResponseDto processUpdate(ValidationResult validationResult, UpdateNoteDto noteDTO) {
-        if (validationResult.isValid()){
-            Optional<Note> note = findById(noteDTO.noteId());
-            if (note.isEmpty()) {
-                return new NewNoteResponseDto(null, false, "Incorrect note ID");
-            } else {
-                Note saved = noteRepository.save(updateDtoToNote(noteDTO, note.get()));
-                return new NewNoteResponseDto(noteToDto(saved), true, "Success!");
-            }
-        }
-        return new NewNoteResponseDto(null, false, validationResult.message());
     }
 
     public FindAllDto findAllNotes() {

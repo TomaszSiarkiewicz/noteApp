@@ -5,7 +5,7 @@ import pl.note.noteapp.dtos.NewNoteDto;
 import pl.note.noteapp.dtos.UpdateNoteDto;
 
 @Component
-public class NewNoteValidator {
+class NewNoteValidator {
     private final String BLANK_MESSAGE = "Title can not be blank!";
     private final String SUCCESS_MESSAGE = "Success!";
 
