@@ -11,11 +11,11 @@ import static pl.note.noteapp.notes.NoteMapper.*;
 import static pl.note.noteapp.notes.NoteMapper.noteToDto;
 
 @Component
-class SaveProcessor {
+class DtoTransformer {
     @Autowired
     private final NoteRepository noteRepository;
 
-    public SaveProcessor(NoteRepository noteRepository) {
+    public DtoTransformer(NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
     }
 

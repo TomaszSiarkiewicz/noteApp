@@ -19,6 +19,7 @@ public class NotesController {
         this.notesFacade = notesFacade;
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/note")
     ResponseEntity<NewNoteResponseDto> result(@RequestBody NewNoteDto note) {
         NewNoteResponseDto response = notesFacade.saveNote(note);
@@ -30,7 +31,7 @@ public class NotesController {
                     .body(response);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PutMapping("/note")
     ResponseEntity<NewNoteResponseDto> updateResult(@RequestBody UpdateNoteDto noteDTO) {
         NewNoteResponseDto result = notesFacade.updateNote(noteDTO);
@@ -40,20 +41,20 @@ public class NotesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping("/notes")
     ResponseEntity<FindAllDto> result() {
         FindAllDto response = notesFacade.findAllNotes();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping("/notes/paged")
-    Page<NoteDto> findAll(@RequestParam int page) {
-        PageRequest pageRequest = PageRequest.of(page, 4, Sort.by("lastEditDate"));
+    Page<NoteFindAllDto> findAll(@RequestParam int page) {
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by("lastEditDate").descending());
         return notesFacade.findAllNotesPaged(pageRequest);
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping("/note/{noteId}")
     ResponseEntity<NoteDto> result(@PathVariable String noteId) {
         Optional<NoteDto> response = notesFacade.getNoteById(noteId);
@@ -62,7 +63,7 @@ public class NotesController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(null));
     }
-
+    @CrossOrigin(origins = "*")
     @DeleteMapping("/note/{noteId}")
     ResponseEntity delete(@PathVariable String noteId) {
         DeleteResponseDto response = notesFacade.delete(noteId);

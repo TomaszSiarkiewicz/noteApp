@@ -13,22 +13,22 @@ import java.util.stream.Collectors;
 public class NotesFacade {
     private final NoteRepository noteRepository;
     private final NewNoteValidator validator;
-    private final SaveProcessor saveProcessor;
+    private final DtoTransformer dtoTransformer;
 
-    public NotesFacade(NoteRepository noteRepository, NewNoteValidator validator, SaveProcessor saveProcessor) {
+    public NotesFacade(NoteRepository noteRepository, NewNoteValidator validator, DtoTransformer dtoTransformer) {
         this.noteRepository = noteRepository;
         this.validator = validator;
-        this.saveProcessor = saveProcessor;
+        this.dtoTransformer = dtoTransformer;
     }
 
     public NewNoteResponseDto saveNote(NewNoteDto newNoteDto) {
         ValidationResult validated = validator.validate(newNoteDto);
-        return saveProcessor.processSave(validated, newNoteDto);
+        return dtoTransformer.processSave(validated, newNoteDto);
     }
 
     public NewNoteResponseDto updateNote(UpdateNoteDto noteDTO) {
         ValidationResult validationResult = validator.validate(noteDTO);
-        return saveProcessor.processUpdate(validationResult, noteDTO);
+        return dtoTransformer.processUpdate(validationResult, noteDTO);
 
     }
 
@@ -43,14 +43,14 @@ public class NotesFacade {
         return note.map(NoteMapper::noteToDto);
     }
 
-    public Page<NoteDto> findAllNotesPaged(PageRequest pageRequest) {
+    public Page<NoteFindAllDto> findAllNotesPaged(PageRequest pageRequest) {
         Page<Note> notePage = noteRepository.findAll(pageRequest);
         return notePage.map(
-                NoteMapper::noteToDto
+                NoteMapper::noteToNoteFindAllDto
         );
     }
 
     public DeleteResponseDto delete(String noteId) {
-        return saveProcessor.delete(noteId);
+        return dtoTransformer.delete(noteId);
     }
 }
