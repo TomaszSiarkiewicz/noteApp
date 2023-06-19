@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.note.noteapp.dtos.CounterResponseDto;
 import pl.note.noteapp.metrics.MetricsService;
 
+
 @RestController
 public class MetricsController {
     @Autowired

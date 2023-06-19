@@ -54,6 +54,7 @@ public class NotesController {
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.by("lastEditDate").descending());
         return notesFacade.findAllNotesPaged(pageRequest);
     }
+
     @CrossOrigin(origins = "*")
     @GetMapping("/note/{noteId}")
     ResponseEntity<NoteDto> result(@PathVariable String noteId) {
