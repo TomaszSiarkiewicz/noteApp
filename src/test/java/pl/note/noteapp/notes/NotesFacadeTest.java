@@ -13,7 +13,6 @@ public class NotesFacadeTest {
     DtoTransformer dtoTransformer = new DtoTransformer(noteRepository);
 
     NotesFacade notesFacade = new NotesFacade(noteRepository, validator, dtoTransformer);
-
     @AfterEach
     public void cleanUp(){
         noteRepository.deleteAll();
