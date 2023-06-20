@@ -20,7 +20,7 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@localhost:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
 
 
   noteapp:
@@ -41,7 +41,7 @@ services:
   notesfront:
     container_name: notesfront
 #    image: notesfront
-    image: 054968576252.dkr.ecr.eu-central-1.amazonaws.com/lotto-front:latest
+    image: 158655606547.dkr.ecr.eu-central-1.amazonaws.com/notes-front:latest
     restart: always
     ports:
       - '3000:3000'

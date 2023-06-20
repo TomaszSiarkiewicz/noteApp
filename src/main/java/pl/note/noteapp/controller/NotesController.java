@@ -8,6 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.note.noteapp.dtos.*;
 import pl.note.noteapp.notes.NotesFacade;
+deploy fiximport org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
@@ -31,6 +37,7 @@ public class NotesController {
                     .body(response);
         }
     }
+
     @CrossOrigin(origins = "*")
     @PutMapping("/note")
     ResponseEntity<NewNoteResponseDto> updateResult(@RequestBody UpdateNoteDto noteDTO) {
@@ -41,6 +48,7 @@ public class NotesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
     }
+
     @CrossOrigin(origins = "*")
     @GetMapping("/notes")
     ResponseEntity<FindAllDto> result() {
@@ -48,6 +56,7 @@ public class NotesController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
+
     @CrossOrigin(origins = "*")
     @GetMapping("/notes/paged")
     Page<NoteFindAllDto> findAll(@RequestParam int page) {
@@ -64,6 +73,7 @@ public class NotesController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(null));
     }
+
     @CrossOrigin(origins = "*")
     @DeleteMapping("/note/{noteId}")
     ResponseEntity delete(@PathVariable String noteId) {
